@@ -29,7 +29,7 @@ export default async function handler(req) {
  const naics=request.searchParams.get('naics')||'';
  if (!/^\d{6}$/.test(naics)) return respond(400,{ok:false,error:'A six-digit naics query is required'});
  const page=Math.max(0,Math.min(100,Number.parseInt(request.searchParams.get('page')||'0',10)||0));
- const size=Math.max(1,Math.min(20,Number.parseInt(request.searchParams.get('size')||'10',10)||10));
+ const size=Math.max(1,Math.min(10,Number.parseInt(request.searchParams.get('size')||'10',10)||10));
  const upstream=new URL('https://api.sam.gov/entity-information/v4/entities');
  upstream.searchParams.set('physicalAddressProvinceOrStateCode','CA');
  upstream.searchParams.set('naicsCode',naics);
