@@ -23,12 +23,12 @@ export default async function handler(req){
  if(length>900000)return reply(413,{ok:false,error:'Maximum upload size is 900 KB'});
  let body;try{body=await req.json()}catch{return reply(400,{ok:false,error:'Invalid JSON'})}
  const batch=body?.batch_id,records=body?.records;
- if(!/^CA-SAM-\\d{3}$/.test(batch||'')||!Array.isArray(records)||records.length<1||records.length>150)return reply(400,{ok:false,error:'Expected batch ID and 1–150 records'});
+ if(!/^CA-SAM-\d{3}$/.test(batch||'')||!Array.isArray(records)||records.length<1||records.length>150)return reply(400,{ok:false,error:'Expected batch ID and 1–150 records'});
  const seen=new Set(),accepted=[],invalid=[];
  for(let i=0;i<records.length;i++){
    const r=records[i]||{},codes=r.registered_naics_codes,matches=r.matched_contract_naics;
    const valid=/^[A-Z0-9]{12}$/.test(r.uei||'')&&typeof r.legal_name==='string'&&r.legal_name.trim().length>1&&r.legal_name.length<500&&r.state==='CA'&&r.registration_status==='Active'&&r.discovery_status==='SAM_VERIFIED'&&
-   Array.isArray(codes)&&codes.length>0&&codes.length<300&&codes.every(c=>typeof c==='string'&&/^\\d{6}$/.test(c))&&Array.isArray(matches)&&matches.length>0&&matches.length<=20&&matches.every(c=>typeof c==='string'&&codes.includes(c))&&(!r.matching_naics||matches.includes(r.matching_naics));
+   Array.isArray(codes)&&codes.length>0&&codes.length<300&&codes.every(c=>typeof c==='string'&&/^\d{6}$/.test(c))&&Array.isArray(matches)&&matches.length>0&&matches.length<=20&&matches.every(c=>typeof c==='string'&&codes.includes(c))&&(!r.matching_naics||matches.includes(r.matching_naics));
    if(!valid||seen.has(r.uei)){invalid.push({index:i+1,reason:valid?'Duplicate UEI within upload':'Invalid registration, UEI or NAICS'});continue}
    seen.add(r.uei);
    accepted.push({discovery_batch_id:batch,uei:r.uei,legal_name:r.legal_name.trim(),state:'CA',city:typeof r.city==='string'?r.city.slice(0,150):null,entity_cage_code:typeof r.cage==='string'?r.cage.slice(0,20):null,registered_naics_codes:[...new Set(codes)],matched_contract_naics:[...new Set(matches)],sam_registration_status:'Active',discovery_status:'SAM_VERIFIED',email_discovery_status:'NOT_STARTED',research_notes:'Imported via authenticated SAM.gov discovery console; source assertions require independent validation before outreach',source_payload:{source:r.source||'SAM.gov Entity Management API v4',batch_id:batch,uei:r.uei,matching_naics:r.matching_naics}});
