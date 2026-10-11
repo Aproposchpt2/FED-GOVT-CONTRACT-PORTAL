@@ -2,6 +2,7 @@
 // SAM_API_KEY: existing SAM.gov credential; SAM_DISCOVERY_ACCESS_TOKEN: operator access.
 // Never include either secret in requests to browsers, logs or response bodies.
 import { timingSafeEqual } from 'node:crypto';
+import { checkSession } from './_sam-session.mjs';
 
 const respond = (status, data) => new Response(JSON.stringify(data), {
  status, headers: { 'content-type':'application/json; charset=utf-8', 'cache-control':'no-store',
@@ -22,7 +23,7 @@ export default async function handler(req) {
  const access=env('SAM_DISCOVERY_ACCESS_TOKEN');
  if (!access || access.length<32) return respond(503,{ok:false,error:'Operator access token not configured'});
  const supplied=(req.headers.get('authorization')||'').replace(/^Bearer\s+/i,'');
- if (!equal(supplied,access)) return respond(401,{ok:false,error:'Unauthorized'});
+ if (!equal(supplied,access) && !checkSession(req,access)) return respond(401,{ok:false,error:'Unauthorized'});
  const key=env('SAM_API_KEY');
  if (!key) return respond(503,{ok:false,error:'SAM.gov credential not configured'});
  const request=new URL(req.url);
