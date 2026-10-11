@@ -1,0 +1,10 @@
+import { createHmac, timingSafeEqual } from 'node:crypto';
+export const secret=()=>Netlify.env.get('SAM_DISCOVERY_ACCESS_TOKEN')||process.env.SAM_DISCOVERY_ACCESS_TOKEN||'';
+export const safeEqual=(a,b)=>{const x=Buffer.from(String(a)),y=Buffer.from(String(b));return x.length===y.length&&timingSafeEqual(x,y)};
+const sign=(payload,key)=>createHmac('sha256',key).update(payload).digest('base64url');
+const COOKIE='__Host-bcp_sam_session';
+export const cookieName=COOKIE;
+export const createSession=(key)=>{const expiry=Math.floor(Date.now()/1000)+7*24*3600;const payload=Buffer.from(JSON.stringify({v:1,exp:expiry})).toString('base64url');return payload+'.'+sign(payload,key)};
+export const checkSession=(req,key)=>{if(key.length<32)return false;const raw=req.headers.get('cookie')||'';const match=raw.split(';').map(x=>x.trim()).find(x=>x.startsWith(COOKIE+'='));if(!match)return false;const token=match.slice(COOKIE.length+1);const [payload,sig,...extra]=token.split('.');if(!payload||!sig||extra.length||!safeEqual(sig,sign(payload,key)))return false;try{const data=JSON.parse(Buffer.from(payload,'base64url').toString('utf8'));return data.v===1&&Number.isInteger(data.exp)&&data.exp>Math.floor(Date.now()/1000)}catch{return false}};
+export const sessionCookie=(value)=>COOKIE+'='+value+'; Path=/; Max-Age=604800; Secure; HttpOnly; SameSite=Strict';
+export const clearCookie=()=>COOKIE+'=; Path=/; Max-Age=0; Secure; HttpOnly; SameSite=Strict';
