@@ -29,10 +29,12 @@ export default async function handler(req) {
  const request=new URL(req.url);
  const naics=request.searchParams.get('naics')||'';
  if (!/^\d{6}$/.test(naics)) return respond(400,{ok:false,error:'A six-digit naics query is required'});
+ const state=String(request.searchParams.get('state')||'CA').toUpperCase();
+ if(!['CA','TX','GA'].includes(state)) return respond(400,{ok:false,error:'Unsupported state'});
  const page=Math.max(0,Math.min(100,Number.parseInt(request.searchParams.get('page')||'0',10)||0));
  const size=Math.max(1,Math.min(10,Number.parseInt(request.searchParams.get('size')||'10',10)||10));
  const upstream=new URL('https://api.sam.gov/entity-information/v4/entities');
- upstream.searchParams.set('physicalAddressProvinceOrStateCode','CA');
+ upstream.searchParams.set('physicalAddressProvinceOrStateCode',state);
  upstream.searchParams.set('naicsCode',naics);
  upstream.searchParams.set('registrationStatus','A');
  upstream.searchParams.set('samRegistered','Yes');
@@ -52,12 +54,12 @@ export default async function handler(req) {
    const assertions=entity.assertions||{};
    const goods=assertions.goodsAndServices||{};
    const registered_naics_codes=[...new Set(naicsOf(goods.naicsList||goods.naics||[]))];
-   const state=String(address.stateOrProvinceCode||'').toUpperCase();
+   const recordState=String(address.stateOrProvinceCode||'').toUpperCase();
    const uei=registration.ueiSAM||'';
    const legal_name=registration.legalBusinessName||'';
-   const verified=state==='CA' && registration.registrationStatus==='Active'
+   const verified=recordState===state && registration.registrationStatus==='Active'
       && registered_naics_codes.includes(naics) && /^[A-Z0-9]{12}$/.test(uei) && !!legal_name;
-   return {uei,legal_name,state,city:address.city||null,cage:registration.cageCode||null,
+   return {uei,legal_name,state:recordState,city:address.city||null,cage:registration.cageCode||null,
     registration_status:registration.registrationStatus||null,registered_naics_codes,
     matching_naics:naics,source:'SAM.gov Entity Management API v4',
     discovery_status:verified?'SAM_VERIFIED':'PENDING_VERIFICATION'};
