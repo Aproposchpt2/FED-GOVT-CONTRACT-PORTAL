@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -98,7 +98,7 @@ $('verifyBtn').addEventListener('click', async () => {
     if(pTok){sessionStorage.setItem('pipeline_session',pTok);localStorage.setItem('pipeline_session',pTok);}
     localStorage.setItem('capgen_email',theEmail);
     m.className='msg ok';m.textContent='Verified — opening your dashboard…';
-    setTimeout(()=>{window.location.assign('/apropos');},400);
+    setTimeout(()=>{window.location.assign(new URLSearchParams(window.location.search).get('next') === '/sam-contractor-search' ? '/sam-contractor-search' : '/apropos');},400);
   }catch(e){m.className='msg err';m.textContent='Connection error. Please try again.';b.disabled=false;b.textContent='Open My Dashboard →';}
 });
 

@@ -42,6 +42,9 @@ async function getRfcpEntitlement(email) {
 }
 
 async function isAllowed(email) {
+  // Workspace owner access is independent of customer subscription duration.
+  // This authorizes OTP delivery only; mailbox verification remains mandatory.
+  if (email === 'jmitchell@aproposgroupllc.com') return true;
   const sub = await getSubscription(email);
   if (sub && String(sub.status || '').toLowerCase() === 'active') {
     if (String(sub.plan_type || '').toLowerCase() === 'agency_30') {
