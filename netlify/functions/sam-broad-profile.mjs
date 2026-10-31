@@ -1,5 +1,5 @@
 export const broadProfile = {
-  "id": "stellar-product-lines-contractor-v1",
+  "id": "stellar-product-lines-contractor-v2",
   "name": "STELLAR Product Lines \u2014 Contractor Scope",
   "enabled": true,
   "naicsCodes": [
@@ -35,14 +35,27 @@ export const broadProfile = {
   "states": [],
   "includePhrases": [
     "Customer Care Center",
+    "Customer Engagement",
+    "Omnichannel",
     "Support Specialist",
     "Client Services",
     "Business Infrastructure",
     "Infrastructure as a Service",
+    "Cloud Architecture",
+    "Hosted Systems",
+    "IT Operations",
     "IaaS",
-    "Lead Management System",
+    "Lead Management",
     "Sales Specialist",
+    "Pipeline Management",
+    "CRM Integration",
+    "Conversion Optimization",
+    "Lead Management System",
     "CRM",
+    "Property Management",
+    "Facility Support",
+    "Tenant Services",
+    "Leasing Support",
     "Property Management Assistant",
     "Tenant Support"
   ],
@@ -55,22 +68,35 @@ export const broadProfile = {
     "food service only"
   ],
   "capabilityGroups": {
-    "Customer Care": [
+    "Customer Care & Engagement": [
       "Customer Care Center",
+      "Customer Engagement",
+      "Omnichannel",
       "Support Specialist",
       "Client Services"
     ],
-    "Infrastructure": [
+    "Infrastructure & IaaS": [
       "Business Infrastructure",
       "Infrastructure as a Service",
+      "Cloud Architecture",
+      "Hosted Systems",
+      "IT Operations",
       "IaaS"
     ],
-    "Lead Management": [
-      "Lead Management System",
+    "Lead & Sales Operations": [
+      "Lead Management",
       "Sales Specialist",
+      "Pipeline Management",
+      "CRM Integration",
+      "Conversion Optimization",
+      "Lead Management System",
       "CRM"
     ],
     "Property Management": [
+      "Property Management",
+      "Facility Support",
+      "Tenant Services",
+      "Leasing Support",
       "Property Management Assistant",
       "Tenant Support"
     ]
@@ -92,22 +118,101 @@ export const broadProfile = {
   "keywordGroups": {
     "customerCare": [
       "Customer Care Center",
+      "Customer Engagement",
+      "Omnichannel",
       "Support Specialist",
       "Client Services"
     ],
     "infrastructure": [
       "Business Infrastructure",
       "Infrastructure as a Service",
+      "Cloud Architecture",
+      "Hosted Systems",
+      "IT Operations",
       "IaaS"
     ],
     "leadManagement": [
-      "Lead Management System",
+      "Lead Management",
       "Sales Specialist",
+      "Pipeline Management",
+      "CRM Integration",
+      "Conversion Optimization",
+      "Lead Management System",
       "CRM"
     ],
     "propertyManagement": [
+      "Property Management",
+      "Facility Support",
+      "Tenant Services",
+      "Leasing Support",
       "Property Management Assistant",
       "Tenant Support"
+    ]
+  },
+  "productLines": [
+    "Property Management Assistant",
+    "Customer Care Center",
+    "Support Specialist",
+    "Business Infrastructure as a Service (IaaS)",
+    "Customer Engagement Operations Center",
+    "Lead Management System",
+    "Sales Specialist"
+  ],
+  "naicsLabels": {
+    "541512": "Computer Systems Design Services",
+    "541519": "Other Computer Related Services",
+    "561421": "Telephone Answering Services",
+    "561422": "Telemarketing Bureaus and Other Contact Centers",
+    "561110": "Office Administrative Services",
+    "531311": "Residential Property Managers"
+  },
+  "pscLabels": {
+    "DE01": "IT and Telecom \u2014 End User Support",
+    "D305": "IT and Telecom \u2014 Teleprocessing, Timeshare, and Cloud Computing",
+    "R099": "Support \u2014 Professional: Other",
+    "Z1JZ": "Maintenance of Miscellaneous Buildings / Property Support"
+  },
+  "productLinePhrases": {
+    "Property Management Assistant": [
+      "Property Management",
+      "Facility Support",
+      "Tenant Services",
+      "Leasing Support",
+      "Property Management Assistant",
+      "Tenant Support"
+    ],
+    "Customer Care Center": [
+      "Customer Care Center",
+      "Client Services",
+      "Omnichannel"
+    ],
+    "Support Specialist": [
+      "Support Specialist",
+      "Client Services"
+    ],
+    "Business Infrastructure as a Service (IaaS)": [
+      "Business Infrastructure",
+      "Infrastructure as a Service",
+      "Cloud Architecture",
+      "Hosted Systems",
+      "IT Operations",
+      "IaaS"
+    ],
+    "Customer Engagement Operations Center": [
+      "Customer Engagement",
+      "Omnichannel"
+    ],
+    "Lead Management System": [
+      "Lead Management",
+      "Lead Management System",
+      "Pipeline Management",
+      "CRM",
+      "CRM Integration",
+      "Conversion Optimization"
+    ],
+    "Sales Specialist": [
+      "Sales Specialist",
+      "Conversion Optimization"
     ]
   }
 };
