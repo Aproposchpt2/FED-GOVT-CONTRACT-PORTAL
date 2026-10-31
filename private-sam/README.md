@@ -49,3 +49,6 @@ Results show up to three PSC badges per contractor, prioritizing codes that matc
 
 ## PSC display preference
 PSC codes are no longer displayed in the main results table. The nine-column results keep primary NAICS only; all saved PSC codes and descriptions remain accessible in each contractor record drawer. PSC storage, scope matching and scoring remain enabled. This supersedes the compact PSC badge layout.
+
+## Independent desktop scrolling
+The desktop workspace fills the viewport below the header. Admin controls stay in place in the left 20% panel, with their own scrollbar when the controls exceed the available height. The middle/results section scrolls independently. At tablet/mobile widths the existing single-column page scroll is retained so neither stacked panel is trapped in a short viewport. Record drawer scrolling remains independent.
