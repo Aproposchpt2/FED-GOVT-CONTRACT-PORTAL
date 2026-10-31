@@ -13,9 +13,20 @@ const SAM_BASE     = 'https://api.sam.gov/entity-information/v3/entities';
 
 const CORS_HEADERS = {
   'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS'
+  'Cache-Control': 'no-store'
 };
+
+// Operator-only: each run spends SAM.gov API requests shared with other Apropos tools.
+// Callers send Authorization: Bearer <SAM_DISCOVERY_ACCESS_TOKEN>.
+const crypto = require('crypto');
+function authorized(event) {
+  var expected = process.env.SAM_DISCOVERY_ACCESS_TOKEN || '';
+  if (expected.length < 32) return false;
+  var header = (event.headers && (event.headers.authorization || event.headers.Authorization)) || '';
+  var supplied = header.replace(/^Bearer\s+/i, '');
+  var a = Buffer.from(supplied), b = Buffer.from(expected);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
 
 function sbH() {
   return {
@@ -105,7 +116,8 @@ function mapEntity(entity, naicsCode) {
 }
 
 exports.handler = async function(event) {
-  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: CORS_HEADERS, body: '' };
+  if (event.httpMethod !== 'POST') return { statusCode: 405, headers: CORS_HEADERS, body: JSON.stringify({ success: false, error: 'POST only' }) };
+  if (!authorized(event)) return { statusCode: 401, headers: CORS_HEADERS, body: JSON.stringify({ success: false, error: 'Operator authorization required' }) };
 
   if (!SAM_API_KEY)  return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ success: false, error: 'SAM_API_KEY not set' }) };
   if (!SUPABASE_URL) return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ success: false, error: 'SUPABASE_URL not set' }) };

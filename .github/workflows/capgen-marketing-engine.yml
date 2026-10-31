@@ -21,4 +21,5 @@ jobs:
       - name: Import SAM.gov contractors
         run: |
           curl -X POST https://capgen.aproposgroupllc.com/.netlify/functions/importer-sam \
-            -H "Content-Type: application/json" -s
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.SAM_DISCOVERY_ACCESS_TOKEN }}" -sS --fail-with-body
