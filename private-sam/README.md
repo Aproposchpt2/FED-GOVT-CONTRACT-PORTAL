@@ -46,3 +46,6 @@ Dedicated psc_codes and secondary_naics_codes text-array columns store the retur
 
 ## Compact PSC column
 Results show up to three PSC badges per contractor, prioritizing codes that match the active search scope. Matching codes are highlighted. A +N more button opens the contractor drawer with the complete saved list; no stored PSC codes are removed. The PSC cell has a minimum width and badges do not break or stack into a tall single-code list. Validation: JavaScript syntax and static build pass.
+
+## PSC display preference
+PSC codes are no longer displayed in the main results table. The nine-column results keep primary NAICS only; all saved PSC codes and descriptions remain accessible in each contractor record drawer. PSC storage, scope matching and scoring remain enabled. This supersedes the compact PSC badge layout.
