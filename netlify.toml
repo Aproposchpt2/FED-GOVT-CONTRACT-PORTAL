@@ -128,3 +128,26 @@
 [[edge_functions]]
   path = "/analyze-fit.html"
   function = "rfcp-analyze-fit-actions"
+
+[[redirects]]
+  from = "/sam-contractor-search"
+  to = "/sam-contractor-search.html"
+  status = 200
+
+[[headers]]
+  for = "/sam-contractor-search*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Cache-Control = "no-store"
+
+[[redirects]]
+  from = "/private-sam/*.sql"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404.html"
+  status = 404
+  force = true
