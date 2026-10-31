@@ -141,7 +141,7 @@
     Cache-Control = "no-store"
 
 [[redirects]]
-  from = "/private-sam/schema.sql"
+  from = "/private-sam/*.sql"
   to = "/404.html"
   status = 404
   force = true
