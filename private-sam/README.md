@@ -14,3 +14,10 @@ Start new Task clears the view and counters without deleting persisted leads. JS
 Validation: node --test tests/sam-search.test.mjs (7 passing); npm run build (static build). Database migration applied separately through connected Supabase tools. Live owner sign-in and authenticated upstream search require owner interaction; do not claim live acceptance until exercised.
 
 Source: https://open.gsa.gov/api/entity-api/
+
+## Broad contractor scope (uploaded package adaptation)
+The default scope preset now comes from STELLAR_SAM_GOV_Broad_Scope_Search_Ruflo_Execution_v1.0_DOWNLOAD.json: NAICS 541512/541519/561422, PSC DE01, seven capability groups, included/excluded phrases. Select the owner-profile preset to restore the existing contract-dashboard NAICS scope. These searches are separate fan-outs combined with OR; a PSC-only contractor is retained without a NAICS match. Each entity must be active, registered, and match the query's registered code. State remains a contractor-location filter. Optional description keyword is a hard description filter; phrase lists are relevance signals.
+
+Contractor scoring adapts only weights supported by entity evidence: +18 for any registered NAICS match, +24 for any registered PSC match, +10 per included phrase found in registered descriptions, −50 per excluded phrase. No opportunity-title, notice type, RFI, deadline or set-aside bonuses are transferred. Groups are reported only when corresponding phrases appear in returned registered descriptions. A full capability statement and past performance remain unverified. Default minimum score 0 retains classification-only candidates with an UNVERIFIED capability status; 20 is the uploaded profile's suggested review threshold. This threshold can be changed. Every saved lead includes score reasons and a snapshot of the scope used. Existing lead records are updated by UEI; this table is not a search-run history ledger.
+
+Live acceptance requires the owner's verified sign-in and the configured SAM API key's Entity API permissions. No fabricated session or capability evidence is used for acceptance.
