@@ -1,3 +1,4 @@
+import resultsTools from '../../private-sam/results-tools.js';
 import { broadProfile } from './sam-broad-profile.mjs';
 import { query, contractors } from './sam-search-core.mjs';
 const OWNER='jmitchell@aproposgroupllc.com';
@@ -14,7 +15,7 @@ export default async function handler(req){try{
  if(!await owner(token))return reply(401,{error:'Owner sign-in required'});
  if(action==='logout'&&req.method==='POST')return reply(200,{ok:true},cookie('',0));
  if(action==='scope'&&req.method==='GET'){const r=await db('capgen_subscriptions?email=eq.'+encodeURIComponent(OWNER)+'&status=eq.active&select=business_name,uei,naics&limit=1');if(!r.ok)throw Error('Profile scope unavailable');const [profile]=await r.json();if(!profile)throw Error('Owner profile unavailable');return reply(200,{profile,broadProfile});}
- if(action==='leads'&&req.method==='GET'){const r=await db('sam_contractor_leads?source_type=eq.sam_entity_v4&select=*&order=fit_score.desc,discovered_at.desc&limit=150');if(!r.ok)throw Error('Leads table unavailable');return reply(200,{records:await r.json()});}
+ if(action==='leads'&&req.method==='GET'){let state;try{state=resultsTools.normalizeState(url.searchParams.get('state'));}catch(e){return reply(400,{error:e.message});}const sort=url.searchParams.get('sort')||'desc';if(!['asc','desc'].includes(sort))return reply(400,{error:'Sort must be asc or desc'});const q=new URLSearchParams({source_type:'eq.sam_entity_v4',select:'*',order:`fit_score.${sort},legal_name.asc`,limit:'150'});if(state)q.set('state','ilike.'+state);const r=await db('sam_contractor_leads?'+q);if(!r.ok)throw Error('Leads table unavailable');return reply(200,{records:await r.json()});}
  if(action!=='search'||req.method!=='POST')return reply(405,{error:'Unsupported operation'});
  const filters=await req.json();if(![50,100,150].includes(Number(filters.target)))return reply(400,{error:'Target must be 50, 100, or 150'});
  const key=env('SAM_GOV_API_KEY')||env('SAM_API_KEY');if(!key)throw Error('SAM.gov key not configured');

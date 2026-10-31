@@ -52,3 +52,6 @@ PSC codes are no longer displayed in the main results table. The nine-column res
 
 ## Independent desktop scrolling
 The desktop workspace fills the viewport below the header. Admin controls stay in place in the left 20% panel, with their own scrollbar when the controls exceed the available height. The middle/results section scrolls independently. At tablet/mobile widths the existing single-column page scroll is retained so neither stacked panel is trapped in a short viewport. Record drawer scrolling remains independent.
+
+## State filtering and Match Score sorting repair
+The state control is now a US state/territory dropdown. It applies to both new upstream searches and displayed records; saved-lead queries apply state in the database before the 150-record limit. State abbreviations and full names normalize consistently. Selecting All states / worldwide clears geography filtering. The table supports numeric Match Score ascending/descending using the sort menu or clickable Match Score heading; the chosen order is preserved as live pages arrive. Saved-lead ordering is applied in the database before limiting, while current-run results sort locally. Outdated asynchronous saved-result responses are ignored after scope changes/new runs. Validation: 25 tests pass, including state normalization, numeric sorting, and saved-query geography/order mapping.
