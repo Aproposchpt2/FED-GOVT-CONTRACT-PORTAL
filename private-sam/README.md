@@ -25,3 +25,9 @@ Live acceptance requires the owner's verified sign-in and the configured SAM API
 ## Owner access repair
 The owner's existing capgen_subscriptions record is active but has an expired agency_30 term. In this isolated branch, pipeline-otp-send explicitly permits OTP delivery to jmitchell@aproposgroupllc.com independently of customer-plan expiry. This does not issue a session or bypass mailbox verification. Other customer access rules remain unchanged. The sign-in link carries a whitelisted next=/sam-contractor-search return path. No subscription rows or expiration timestamps were changed.
 Validation: 16 tests pass, including expired-owner-plan OTP eligibility, rejection of other expired customers, and OTP storage error handling. Email delivery tests are mocked; the user requests and enters their actual code.
+
+## Results columns
+Contractor Name | UEI | CAGE Code | City | State | Primary NAICS Code | PSC Codes | Capability Match | Match Score | Registration Status | SAM.gov Profile.
+
+The primary NAICS display is sourced only from assertions.goodsAndServices.primaryNaics and saved as primary_naics. Missing primary codes display Not supplied, including older saved records until they are rediscovered. The matching query code and secondary NAICS codes are never substituted for the registered primary. Full registered codes remain available internally for discovery and relevance calculations, but are not listed in the results columns. PSC codes use the stored entity evidence; capability matches retain unverified labeling. The SAM.gov Profile action opens entity search and identifies the UEI to search for; it does not invent an unsupported deep link.
+Validation: 18 tests pass, including secondary-code discovery with a different registered primary, and missing-primary handling.
