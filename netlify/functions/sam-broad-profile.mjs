@@ -1,14 +1,20 @@
 export const broadProfile = {
-  "id": "support-specialist-contractor-v1",
-  "name": "Support Specialist \u2014 Broad Contractor Scope",
+  "id": "stellar-product-lines-contractor-v1",
+  "name": "STELLAR Product Lines \u2014 Contractor Scope",
   "enabled": true,
   "naicsCodes": [
     "541512",
     "541519",
-    "561422"
+    "561421",
+    "561422",
+    "561110",
+    "531311"
   ],
   "pscCodes": [
-    "DE01"
+    "DE01",
+    "D305",
+    "R099",
+    "Z1JZ"
   ],
   "noticeTypes": [
     "r",
@@ -28,47 +34,17 @@ export const broadProfile = {
   ],
   "states": [],
   "includePhrases": [
-    "help desk",
-    "service desk",
-    "contact center",
-    "call center",
-    "customer support",
-    "customer service",
-    "technical support",
-    "tier 1 support",
-    "tier 2 support",
-    "managed contact center",
-    "managed service desk",
-    "enterprise service desk",
-    "it service desk",
-    "end user support",
-    "user support",
-    "customer care",
-    "after hours support",
-    "24/7 support",
-    "inbound support",
-    "support center",
-    "customer inquiry",
-    "service request",
-    "incident management",
-    "case management",
-    "ticket management",
-    "it service management",
-    "itsm",
-    "knowledge management",
-    "contact center modernization",
-    "service desk modernization",
-    "customer service modernization",
-    "virtual agent",
-    "conversational ai",
-    "automated support",
-    "service desk automation",
-    "overflow support",
-    "surge support",
-    "telephone support",
-    "intake services",
-    "request intake",
-    "customer intake"
+    "Customer Care Center",
+    "Support Specialist",
+    "Client Services",
+    "Business Infrastructure",
+    "Infrastructure as a Service",
+    "IaaS",
+    "Lead Management System",
+    "Sales Specialist",
+    "CRM",
+    "Property Management Assistant",
+    "Tenant Support"
   ],
   "excludePhrases": [
     "construction only",
@@ -79,47 +55,24 @@ export const broadProfile = {
     "food service only"
   ],
   "capabilityGroups": {
-    "Contact Center": [
-      "contact center",
-      "call center",
-      "customer care",
-      "customer service center"
+    "Customer Care": [
+      "Customer Care Center",
+      "Support Specialist",
+      "Client Services"
     ],
-    "Help Desk": [
-      "help desk",
-      "service desk",
-      "enterprise service desk",
-      "it service desk"
+    "Infrastructure": [
+      "Business Infrastructure",
+      "Infrastructure as a Service",
+      "IaaS"
     ],
-    "Technical Support": [
-      "technical support",
-      "tier 1 support",
-      "tier 2 support",
-      "end user support"
+    "Lead Management": [
+      "Lead Management System",
+      "Sales Specialist",
+      "CRM"
     ],
-    "24/7 and Overflow": [
-      "24/7 support",
-      "after hours support",
-      "overflow support",
-      "surge support"
-    ],
-    "Case and Incident": [
-      "incident management",
-      "case management",
-      "ticket management",
-      "service request"
-    ],
-    "Automation": [
-      "virtual agent",
-      "conversational ai",
-      "automated support",
-      "service desk automation"
-    ],
-    "Intake": [
-      "intake services",
-      "request intake",
-      "customer intake",
-      "telephone support"
+    "Property Management": [
+      "Property Management Assistant",
+      "Tenant Support"
     ]
   },
   "weights": {
@@ -135,5 +88,26 @@ export const broadProfile = {
     "exclusionPenalty": 50
   },
   "minimumScore": 20,
-  "sourcePackage": "STELLAR_SAM_GOV_Broad_Scope_Search_Ruflo_Execution_v1.0"
+  "sourcePackage": "Owner-provided STELLAR product-line scope revision",
+  "keywordGroups": {
+    "customerCare": [
+      "Customer Care Center",
+      "Support Specialist",
+      "Client Services"
+    ],
+    "infrastructure": [
+      "Business Infrastructure",
+      "Infrastructure as a Service",
+      "IaaS"
+    ],
+    "leadManagement": [
+      "Lead Management System",
+      "Sales Specialist",
+      "CRM"
+    ],
+    "propertyManagement": [
+      "Property Management Assistant",
+      "Tenant Support"
+    ]
+  }
 };
