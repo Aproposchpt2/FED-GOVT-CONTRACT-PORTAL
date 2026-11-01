@@ -1,6 +1,7 @@
 import resultsTools from '../../private-sam/results-tools.js';
 import { broadProfile } from './sam-broad-profile.mjs';
 import { query, contractors } from './sam-search-core.mjs';
+import { MAX_PER_REQUEST, StopBatch, discoverOne, discoveryPatch } from './sam-email-discovery.mjs';
 const OWNER='jmitchell@aproposgroupllc.com';
 const env=k=>globalThis.Netlify?.env?.get(k)||process.env[k]||'';
 const reply=(status,data,cookie)=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json','cache-control':'no-store','x-robots-tag':'noindex, nofollow',...(cookie?{'set-cookie':cookie}:{})}});
@@ -16,6 +17,7 @@ export default async function handler(req){try{
  if(action==='logout'&&req.method==='POST')return reply(200,{ok:true},cookie('',0));
  if(action==='scope'&&req.method==='GET'){const r=await db('capgen_subscriptions?email=eq.'+encodeURIComponent(OWNER)+'&status=eq.active&select=business_name,uei,naics&limit=1');if(!r.ok)throw Error('Profile scope unavailable');const [profile]=await r.json();if(!profile)throw Error('Owner profile unavailable');return reply(200,{profile,broadProfile});}
  if(action==='leads'&&req.method==='GET'){let state;try{state=resultsTools.normalizeState(url.searchParams.get('state'));}catch(e){return reply(400,{error:e.message});}const sort=url.searchParams.get('sort')||'desc';if(!['asc','desc'].includes(sort))return reply(400,{error:'Sort must be asc or desc'});const q=new URLSearchParams({source_type:'eq.sam_entity_v4',select:'*',order:`fit_score.${sort},legal_name.asc`,limit:'150'});if(state)q.set('state','ilike.'+state);const r=await db('sam_contractor_leads?'+q);if(!r.ok)throw Error('Leads table unavailable');return reply(200,{records:await r.json()});}
+ if(action==='discover-emails'&&req.method==='POST')return discoverEmails(await req.json().catch(()=>({})));
  if(action!=='search'||req.method!=='POST')return reply(405,{error:'Unsupported operation'});
  const filters=await req.json();if(![50,100,150].includes(Number(filters.target)))return reply(400,{error:'Target must be 50, 100, or 150'});
  const key=env('SAM_GOV_API_KEY')||env('SAM_API_KEY');if(!key)throw Error('SAM.gov key not configured');
@@ -27,4 +29,26 @@ export default async function handler(req){try{
  if(records.length){const saved=await db('sam_contractor_leads?on_conflict=contractor_key',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(records)});if(!saved.ok)throw Error('Could not save discovered contractors');}
  return reply(200,{records,scanned:data.entityData.length,totalRecords:data.totalRecords||0,page:Number(filters.page||0),exhausted:data.entityData.length<10||(Number.isFinite(Number(data.totalRecords))&&(Number(filters.page||0)+1)*10>=Number(data.totalRecords))});
  }catch{return reply(503,{error:'Search service unavailable. Check deployment configuration, database, or upstream timeout.'});}}
+// Owner-only Hunter email discovery for up to MAX_PER_REQUEST saved leads.
+export async function discoverEmails(body,{request}={}){
+ const keys=[...new Set(Array.isArray(body?.keys)?body.keys.filter(k=>typeof k==='string'&&/^[A-Za-z0-9:_-]{1,80}$/.test(k)):[])];
+ if(!keys.length)return reply(400,{error:'Choose at least one saved contractor.'});
+ if(keys.length>MAX_PER_REQUEST)return reply(400,{error:`Run discovery on ${MAX_PER_REQUEST} contractors at a time.`});
+ const apiKey=env('HUNTER_API_KEY');if(!apiKey)return reply(503,{error:'HUNTER_API_KEY is not set in Netlify.'});
+ const list=keys.map(k=>`"${k}"`).join(',');
+ const r=await db(`sam_contractor_leads?contractor_key=in.(${encodeURIComponent(list)})&source_type=eq.sam_entity_v4&select=contractor_key,legal_name,match_evidence,email_discovery_status`);
+ if(!r.ok)throw Error('Leads table unavailable');
+ const leads=await r.json();const results=[];let stopped=null;
+ for(const lead of leads){
+  let result;
+  try{result=await discoverOne(lead,{apiKey,...(request?{request}:{})});}
+  catch(e){if(e instanceof StopBatch){stopped=e.message;break;}throw e;}
+  const patch=discoveryPatch(result);
+  const u=await db(`sam_contractor_leads?contractor_key=eq.${encodeURIComponent(lead.contractor_key)}`,{method:'PATCH',headers:{Prefer:'return=minimal'},body:JSON.stringify(patch)});
+  if(!u.ok)throw Error('Could not save discovery result');
+  results.push({contractor_key:lead.contractor_key,legal_name:lead.legal_name,...patch});
+ }
+ const missing=keys.filter(k=>!leads.some(l=>l.contractor_key===k));
+ return reply(stopped&&!results.length?429:200,{results,missing,stopped});
+}
 export const config={path:'/api/private-sam',rateLimit:{action:'rate_limit',aggregateBy:'ip',windowSize:60,windowLimit:30}};
