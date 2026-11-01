@@ -24,7 +24,9 @@ export function domainOf(website) {
   } catch { return null; }
 }
 
-const httpsSource = (uri) => { try { const u = new URL(uri); return /^https?:$/.test(u.protocol) ? u.href : null; } catch { return null; } };
+// A source must be a page that publishes the email, not a search-results or login-walled link.
+const NOT_EVIDENCE = /(^|\.)(google|bing|duckduckgo|yahoo|linkedin)\.[a-z.]+$/i;
+const httpsSource = (uri) => { try { const u = new URL(uri); return /^https?:$/.test(u.protocol) && !NOT_EVIDENCE.test(u.hostname) ? u.href : null; } catch { return null; } };
 
 // Picks the best published personal email from a Hunter domain-search response.
 export function pickEmail(hunter, domain) {
